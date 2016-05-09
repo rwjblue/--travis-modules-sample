@@ -1,0 +1,65 @@
+---
+language: node_js
+node_js: 5
+
+env:
+  - EMBER_VERSION=default
+  - EMBER_VERSION=beta
+  - EMBER_VERSION=canary
+
+matrix:
+  allow_failures:
+    - env: EMBER_VERSION=beta
+    - env: EMBER_VERSION=canary
+
+  fast_finish: true
+
+# TODO restore Sauce Connect when it’s actually being used
+# addons:
+#   sauce_connect: true
+
+sudo: false
+
+cache:
+  branch: md5deep
+  directories:
+    - node_modules
+    - bower_components
+
+before_install:
+  - mkdir travis-phantomjs
+  - wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -O $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2
+  - tar -xvf $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -C $PWD/travis-phantomjs
+  - export PATH=$PWD/travis-phantomjs:$PATH
+  - "npm config set spin false"
+  - "npm install -g npm@^2"
+
+install:
+  - npm install -g bower
+  - npm install
+  - bower install
+
+script:
+  - ember try:one $EMBER_VERSION --- ember test --reporter dot
+
+before_deploy:
+  - ASSETS_HOST=https://s3.amazonaws.com/travis-error-pages ember build --env production
+  # delete some of the stuff that's useless for maintenance page
+  - rm -fr dist/assets/*.js dist/images/emoji dist/index.html dist/images/sponsors
+  - cp dist/maintenance.html dist/index.html
+
+deploy:
+  provider: s3
+  access_key_id: $MAINTENANCE_S3_ACCESS_KEY_ID
+  secret_access_key: $MAINTENANCE_S3_SECRET_ACCESS_KEY
+  bucket: travis-error-pages
+  skip_cleanup: true
+  acl: public_read
+  local_dir: dist
+  region: us-east-1
+  on:
+    branch: master
+    condition: "$EMBER_VERSION = default"
+
+after_success:
+  - "test $EMBER_VERSION == 'default' && test $TRAVIS_PULL_REQUEST && test $TRAVIS_PULL_REQUEST != 'false' && $TRAVIS_SECURE_ENV_VARS == 'true' && ./config/deployment/deploy-pull-request.sh"

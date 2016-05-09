@@ -1,0 +1,27 @@
+<div class="profile-hooks profile-switch">
+  {{hook-switch hook=hook onToggleError="handleToggleError" onToggle="resetErrors"}}
+  {{#if hook.isSaving}}
+    {{loading-indicator inline=true}}
+  {{else}}
+    {{#link-to "settings" hook.ownerName hook.name class="profile-settings" title="Go to Travis CI repo settings"}}<span class="icon-settings"></span>{{/link-to}}
+  {{/if}}
+</div>
+<a href={{hook.urlGithub}} rel="nofollow" class="profile-repo">
+  {{hook.slug}}
+  <span>{{hook.description}}</span></a>
+
+{{#if showError}}
+  <div class="hooks-error">
+    <p>
+      An error happened when we tried to alter settings on GitHub.
+      {{#if githubOrgsOauthAccessSettingsUrl}}
+        It may be caused by API restrictions, please
+        <a href={{githubOrgsOauthAccessSettingsUrl}}
+          title="Orgs Oauth Access Settings on GitHub">
+          review and add
+        </a> your authorized Orgs.
+      {{/if}}
+      <a class="close" {{action "close" target=view}}></a>
+    </p>
+  </div>
+{{/if}}

@@ -1,0 +1,104 @@
+{{#if allHooks.isLoaded}}
+
+<header>
+  {{#unless config.enterprise}}
+    {{#if config.billingEndpoint}}
+      <div class="cta-btn">
+        {{#if subscribeButtonInfo.subscribed}}
+          <a class="btn btn-activated" href={{billingUrl}}>Subscription active!</a>
+        {{else}}
+          {{#if subscribeButtonInfo.education}}
+            <a class="btn btn-activated" href={{billingUrl}}>Educational account!</a>
+          {{else}}
+            <a class="btn btn-activate" href={{billingUrl}}> Sign up this account!</a>
+          {{/if}}
+        {{/if}}
+      </div>
+    {{/if}}
+  {{/unless}}
+
+    <div class="profile-header">
+      <h1>{{accountName}}</h1>
+    </div>
+
+    {{sync-button user=auth.currentUser}}
+
+    {{#unless config.enterprise}}
+      {{#if config.pro}}
+        <p class="helptext">We're only showing your private repositories. You can find your public projects on <a href="https://travis-ci.org" title="travis-ci.org">travis-ci.org</a>.</p>
+      {{else}}
+        <p class="helptext">We're only showing your public repositories. You can find your private projects on <a href="https://travis-ci.com" title="travis-ci.com">travis-ci.com</a>.</p>
+      {{/if}}
+    {{/unless}}
+  </header>
+
+  <section class="profile-getstarted">
+    {{!-- <a href="#" class="dismiss"><span class="icon icon--dismiss-grey"></span></a> --}}
+    <ol class="row">
+      <li class="columns medium-4">
+        <figure>
+          <img src="/images/ui/hooks-step-1-01.svg" alt="Flick the repo switch">
+          <figcaption>Flick the repository switch on</figcaption>
+        </figure>
+      </li>
+      <li class="columns medium-4">
+        <figure>
+          <img src="/images/ui/hooks-step-2-01.svg" alt="Add .travis.yml file">
+          <figcaption>Add .travis.yml file to your repository</figcaption>
+        </figure>
+      </li>
+      <li class="columns medium-4">
+        <figure>
+          <img src="/images/ui/hooks-step-3-01.svg" alt="Do a git push">
+          <figcaption>Trigger your first build with a git push</figcaption>
+        </figure>
+      </li>
+    </ol>
+  </section>
+
+  <div id="administerable-hooks">
+    <ul class="profile-hooklist">
+      {{#each hooks as |hook|}}
+        {{hooks-list-item hook=hook}}
+      {{else}}
+        <li>
+          {{#if hooksWithoutAdmin.length}}
+            Sorry, but we can't find any repositories you have admin access to.
+          {{else}}
+            Sorry, it seems like we couldn't find any repositories you have access to on GitHub.
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+
+  {{#if hooksWithoutAdmin.length}}
+    <div id="unadministerable-hooks">
+      <p>You require admin rights to enable these repositories</p>
+
+      <ul class="profile-hooklist">
+        {{#each hooksWithoutAdmin as |hook| }}
+          <li class="{{if hook.active 'active'}} row">
+            <div class="switch--icon inline-block disabled {{if hook.active 'active'}}">
+              <div class="switch-inner">
+                <span class="on">
+                  ON
+                </span>
+                <span class="off">
+                  OFF
+                </span>
+              </div>
+            </div>
+            <a href={{hook.urlGithub}} rel="nofollow" class="profile-repo">
+              {{hook.slug}}
+              <span>{{hook.description}}</span>
+            </a>
+          </li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+
+{{else}}
+  {{loading-indicator}}
+{{/if}}

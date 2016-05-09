@@ -1,0 +1,20 @@
+{{#build-wrapper build=build}}
+{{#if loading}}
+  {{loading-indicator}}
+{{else}}
+
+  {{build-header item=build user=auth.currentUser commit=commit repo=repo}}
+
+  {{#if build.isMatrix}}
+    {{#if jobsLoaded}}
+      {{jobs-list jobs=build.requiredJobs repo=repo required="true"}}
+      {{jobs-list jobs=build.allowedFailureJobs repo=repo}}
+    {{else}}
+      {{loading-indicator center=true}}
+    {{/if}}
+  {{else}}
+    {{job-log job=build.jobs.firstObject}}
+  {{/if}}
+
+{{/if}}
+{{/build-wrapper}}

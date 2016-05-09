@@ -1,0 +1,37 @@
+<div class="tile {{repo.lastBuildState}}">
+  <h2 class="tile-title {{repo.lastBuildState}}">
+    {{#if repo.slug}}
+      {{status-icon status=repo.lastBuildState}}
+      {{#link-to "repo" repo}}
+      <span class="label-align">{{repo.slug}}</span>
+      {{/link-to}}
+    {{/if}}
+  </h2>
+
+  {{#if repo.slug}}
+    {{#if repo.lastBuildId}}
+      <p class="tile-title float-right {{repo.lastBuildState}}">
+        <span class="icon-hash"></span>
+        {{#link-to "build" repo repo.lastBuildId}}
+          <span class="label-align">{{repo.lastBuildNumber}}</span>
+        {{/link-to}}
+      </p>
+    {{/if}}
+  {{/if}}
+
+  <p>
+    <span class="icon-clock"></span>
+    <span class="label-align">Duration:
+    <time class="duration" datetime="PT{{repo.lastBuildDuration}}S" title={{repo.lastBuildStartedAt}}>
+      {{format-duration repo.lastBuildDuration}}
+    </time></span>
+  </p>
+
+  <p>
+    <span class="icon-calendar"></span>
+    <span class="label-align">Finished:
+    <time class="finished_at timeago" datetime={{repo.lastBuildFinishedAt}} title={{repo.lastBuildFinishedAt}}>
+      {{format-time repo.lastBuildFinishedAt}}
+    </time></span>
+  </p>
+</div>

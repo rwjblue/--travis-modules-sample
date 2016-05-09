@@ -1,0 +1,44 @@
+<div class="row-item">
+  {{status-icon status=requestClass}}
+</div>
+
+<div class="row-item fade-out {{requestClass}}">
+  {{request-icon event=request.event_type state=requestClass}}
+  {{#if request.isPullRequest}}
+    <strong class="label-align">#{{request.pullRequestNumber}}</strong>
+  {{else}}
+    {{#if hasBranchName}}
+      <strong class="label-align">{{request.branchName}}</strong>
+    {{/if}}
+  {{/if}}
+  <span class="label-align">{{github-commit-link request.repo.slug request.commit.sha}}</span>
+</div>
+
+<div class="row-item fade-out">
+  <span class="icon-calendar"></span>
+  <span class="label-align">{{format-time request.created_at}}</span></div>
+
+<div class="row-item fade-out">
+  {{{format-message request.commit.message short="true" repo=request.build.repo}}}
+</div>
+
+<div class="row-item">
+  {{#if request.build}}
+    {{#link-to "build" request.build}}
+      <span class="icon-hash"></span>
+      <span class="label-align">{{request.build.number}}</span>{{/link-to}}
+  {{else}}
+    -
+  {{/if}}
+</div>
+
+<div class="row-item fade-out">
+  <span class="label-align" title="{{message}}">{{message}} </span>
+</div>
+
+{{#if isGHPages}}
+  <a class="tooltip--requests" href="https://docs.travis-ci.com/user/customizing-the-build/#Whitelisting-or-blacklisting-branches" title="Branch whitelisting - Travis CI Docs">
+    <span class="icon-question tooltip-trigger" aria-label="Help"></span>
+    <span class="tooltip-bubble">Read about branch whitelisting</span>
+  </a>
+{{/if}}

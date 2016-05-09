@@ -1,0 +1,71 @@
+<div class="settings">
+
+  <section class="settings-section">
+    <h2 class="small-title">General Settings</h2>
+
+    <ul class="settings-list--columns">
+      <li>{{settings-switch active=model.settings.builds_only_with_travis_yml repo=repo description="Build only if .travis.yml is present" key="builds_only_with_travis_yml"}}</li>
+      <li>{{settings-switch active=model.settings.build_pushes repo=repo description="Build pushes" key="build_pushes"}}</li>
+      <li>{{limit-concurrent-builds value=model.settings.maximum_number_of_builds enabled=concurrentBuildsLimit repo=repo}}</li>
+      <li>{{settings-switch active=model.settings.build_pull_requests repo=repo description="Build pull requests" key="build_pull_requests"}}</li>
+    </ul>
+
+  </section>
+
+  <section class="settings-section">
+    <h2 class="small-title">Environment Variables</h2>
+
+    <p>Notice that the values are not escaped when your builds are executed. Special characters (for bash) should be escaped accordingly.</p>
+
+    <ul class="settings-list--envvars">
+      {{#each envVars as |envVar|}}
+        <li>{{env-var envVar=envVar}}</li>
+      {{/each}}
+    </ul>
+
+    {{add-env-var repo=repo}}
+
+  </section>
+
+  {{#if model.cronJobs.enabled}}
+    <section class="settings-section">
+      <h2 class="small-title">Cron Jobs</h2>
+
+      <ul class="settings-list--crons">
+        {{#each model.cronJobs.jobs as |cron|}}
+          <li>{{cron-job cron=cron}}</li>
+        {{/each}}
+
+        <li>{{add-cron-job branches=branches}}</li>
+      </ul>
+
+    </section>
+  {{/if}}
+
+{{#if config.endpoints.sshKey}}
+  <section class="settings-section">
+    <h2 class="small-title">SSH Key</h2>
+
+    {{#if model.customSshKey}}
+      {{ssh-key key=model.customSshKey sshKeyDeleted="sshKeyDeleted" pushAccess=model.hasPushAccess}}
+    {{else}}
+      {{ssh-key key=model.sshKey}}
+
+      {{#if model.hasPushAccess}}
+        {{add-ssh-key repo=repo sshKeyAdded="sshKeyAdded"}}
+      {{/if}}
+    {{/if}}
+
+    {{#unless model.hasPushAccess}}
+      <p>You don't have sufficient permissons to add or remove ssh keys on this repository.</p>
+    {{/unless}}
+
+  </section>
+{{/if}}
+ {{!--  <section class="settings-section">
+    <h2 class="small-title">Deactivate Repository</h2>
+    <p>If you'd no longer like to run this project on Travis CI you can deactivate it now.<br>You will be able to reactivate it in the future if you'd like to.</p>
+    <a href="#" class="button--delete" {{action "deactivate"}}>Deactivate Repository</a>
+  </section> --}}
+
+</div>

@@ -1,0 +1,27 @@
+{{#travis-layout layoutName="layouts/simple"}}
+<div id="insufficient-permissions">
+  <img src="/images/travis-crying.png" class="sad-travis" width="150">
+
+  <p class="insufficient-permissions-head">
+  	Sorry, something went missing.
+  </p>
+
+  <p class="insufficient-permissions-more">
+    It looks like we don't have sufficient privileges for your GitHub account.
+    This can happen for different reasons, most commonly due to an older token
+    stored on our end, or because some of the permissions have been removed
+    from the token. Unfortunately we need those to provide you with the best service.
+    <br/><br/>
+    Luckily, the issue can be easily corrected by going through the login flow
+    once again. Make sure the permissions we ask for are all available.
+    <br/><br/>
+    For more information about the OAuth scopes and what we need them for,
+    <a href="http://docs.travis-ci.com/user/github-oauth-scopes/">check our documentation on this topic</a>.
+  </p>
+
+  <div class="insufficient-permissions-row">
+    {{#if existingUser}}
+    {{/if}}
+  </div>
+</div>
+{{/travis-layout}}

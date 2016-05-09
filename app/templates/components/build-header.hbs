@@ -1,0 +1,89 @@
+<div class="build-commit">
+  <h2 class="build-title {{item.state}}">
+    {{status-icon status=item.state}}
+    {{#if item.pullRequest}}
+      <small class="commit-branch" title={{item.pullRequestTitle}}>Pull Request #{{item.pullRequestNumber}}</small>
+      {{item.pullRequestTitle}}
+    {{else}}
+      <small class="commit-branch" title={{item.branchName}}>{{item.branchName}}</small>
+      {{format-message commit.subject repo=item.repo}}
+    {{/if}}
+  </h2>
+  <div class="commit-info">
+
+  {{#if commit.body }}
+    <p class="commit-description">
+      {{#if item.pullRequest}}
+        {{format-message commit.subject repo=item.repo}}<br>
+      {{/if}}
+      <span class="monospace">{{format-message commit.body repo=item.repo pre=true}}</span>
+    </p>
+  {{/if}}
+    <ul class="list-icon">
+      <li>
+        <a class="commit-commit" title="See the commit on GitHub" href={{urlGithubCommit}}>
+          <span class="icon-github" aria-hidden="true"></span>
+          <span class="label-align">Commit {{format-sha commit.sha}}</span></a>
+      </li>
+      <li>
+        {{#if item.pullRequest}}
+          <a class="commit-compare" title="See the commit on GitHub" href={{item.commit.compareUrl}}>
+            <span class="icon-github" aria-hidden="true"></span>
+            <span class="label-align">#{{item.pullRequestNumber}}: {{item.pullRequestTitle}}</span></a>
+        {{else}}
+          {{#if item.commit.compareUrl}}
+            <a class="commit-compare" title="See the diff on GitHub" href={{item.commit.compareUrl}}>
+              <span class="icon-github" aria-hidden="true"></span>
+              <span class="label-align">Compare {{short-compare-shas item.commit.compareUrl}}</span></a>
+          {{/if}}
+        {{/if}}
+      </li>
+    </ul>
+    <p class="commit-author">
+      {{#if commit.authorName}}
+        {{user-avatar url=commit.authorAvatarUrlOrGravatar name=commit.authorName small=true}}
+        <span class="label-align">{{commit.authorName}} authored{{#if commit.authorIsCommitter}} and committed{{/if}}</span>
+      {{/if}}
+      {{#unless commit.authorIsCommitter}}
+        {{#if commit.committerName}}
+          {{user-avatar url=commit.committerAvatarUrlOrGravatar name=commit.committerName small=true}}
+          <span class="label-align">{{commit.committerName}} committed</span>
+        {{/if}}
+      {{/unless}}
+    </p>
+  </div>
+</div>
+
+<div class="build-info">
+  <h3 class="build-status {{item.state}}">
+    {{#if isJob}}
+      {{#link-to "job" repo item}}
+        {{request-icon event=item.build.eventType state=item.state}} #{{item.number}} {{humanize-state item.state}}{{/link-to}}
+    {{else}}
+      {{#link-to "build" repo item}}
+        {{request-icon event=item.eventType state=item.state}} #{{item.number}} {{humanize-state item.state}}{{/link-to}}
+    {{/if}}
+  </h3>
+  <ul class="list-icon">
+    <li title="{{format-duration elapsedTime}}" class="commit-stopwatch">
+      <span class="icon-stopwatch" aria-hidden="true"></span>
+      <span class="label-align">Elapsed time <time datetime="PT{{elapsedTime}}S">{{format-duration elapsedTime}}</time></span></li>
+    {{#unless isJob}}
+      {{#if item.isMatrix}}
+        <li title="{{format-duration item.duration}}" class="commit-clock">
+          <span class="icon-clock" aria-hidden="true"></span>
+          <span class="label-align">{{#if item.isFinished}}Total time{{else}}Running for{{/if}} <time datetime="PT{{item.duration}}S">{{format-duration item.duration}}</time></span></li>
+      {{/if}}
+    {{/unless}}
+    <li title="{{pretty-date item.finishedAt}}" class="commit-calendar">
+      <span class="icon-calendar" aria-hidden="true"></span>
+      <time class="label-align" datetime={{item.finishedAt}}>{{format-time item.finishedAt}}</time></li>
+  </ul>
+</div>
+<div class="build-tools">
+  {{#if isJob}}
+    {{repo-actions job=item repo=item.repo user=auth.currentUser}}
+  {{else}}
+    {{repo-actions build=item repo=item.repo user=user}}
+  {{/if}}
+</div>

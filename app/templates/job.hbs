@@ -1,0 +1,13 @@
+{{#job-wrapper repo=repo job=job}}
+{{#if job.isLoaded}}
+
+  {{build-header item=job user=auth.currentUser commit=job.commit repo=repo}}
+
+  {{job-log job=job}}
+
+{{else}}
+  <div id="job">
+    {{loading-indicator}}
+  </div>
+{{/if}}
+{{/job-wrapper}}
