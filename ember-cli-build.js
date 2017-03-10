@@ -30,7 +30,11 @@ module.exports = function(defaults) {
     vendorFiles: {
       // next line is needed to prevent ember-cli to load
       // handlebars (it happens automatically in 0.1.x)
-      'handlebars.js': null
+      'handlebars.js': null,
+
+      // need to explicitly make sure that ember-cli will not try to pull in a
+      // hardcoded ember-resolver.js
+      'ember-resolver.js': null
     }
   });
 
